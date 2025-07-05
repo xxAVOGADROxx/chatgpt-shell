@@ -78,13 +78,6 @@
 (require 'color)
 
 (require 'chatgpt-shell-anthropic)
-(require 'chatgpt-shell-deepseek)
-(require 'chatgpt-shell-google)
-(require 'chatgpt-shell-kagi)
-(require 'chatgpt-shell-ollama)
-(require 'chatgpt-shell-openai)
-(require 'chatgpt-shell-openrouter)
-(require 'chatgpt-shell-perplexity)
 (require 'chatgpt-shell-prompt-compose)
 
 (defcustom chatgpt-shell-request-timeout 600
@@ -235,27 +228,16 @@ Can be used compile or run source block at point."
   :group 'chatgpt-shell)
 
 (defun chatgpt-shell--make-default-models ()
-  "Create a list of default models by combining models from different providers.
+  "Create a list of default models from Anthropic/Claude.
 
-This function aggregates models from OpenAI, Anthropic, Google, and Ollama.
-It returns a list containing all available models from these providers."
-  (append (chatgpt-shell-anthropic-models)
-          (chatgpt-shell-deepseek-models)
-          (chatgpt-shell-google-models)
-          (chatgpt-shell-kagi-models)
-          (chatgpt-shell-ollama-models)
-          (chatgpt-shell-openai-models)
-          (chatgpt-shell-openrouter-models)
-          (chatgpt-shell-perplexity-models)))
+This function returns available Claude models."
+  (chatgpt-shell-anthropic-models))
 
 (defcustom chatgpt-shell-models
   (chatgpt-shell--make-default-models)
   "The list of supported models to swap from.
 
-See `chatgpt-shell-openai-models',
-    `chatgpt-shell-anthropic-models'
-    `chatgpt-shell-ollama-models'
-    `chatgpt-shell-google-models' for details."
+See `chatgpt-shell-anthropic-models' for details."
   :type '(repeat (alist :key-type symbol :value-type sexp))
   :group 'chatgpt-shell)
 

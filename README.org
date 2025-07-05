@@ -4,7 +4,7 @@
 
 * chatgpt-shell
 
-A multi-llm Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Shell-Prompts.html][comint]] shell, by [[https://lmno.lol/alvaro][me]].
+A Claude-focused Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Shell-Prompts.html][comint]] shell for Anthropic's Claude models.
 
 * Related packages
 
@@ -15,26 +15,17 @@ A multi-llm Emacs [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Sh
 
 * News
 
-chatgpt-shell goes multi model 🎉
+chatgpt-shell focused on Claude 🎉
 
-Please sponsor the project to make development + support sustainable.
+This fork is focused on Anthropic's Claude models for secure, work-focused usage.
 
 | Provider   | Model         | Supported | Setup                            |
 |------------+---------------+-----------+----------------------------------|
 | Anthropic  | Claude        | Yes       | Set =chatgpt-shell-anthropic-key=  |
-| Deepseek   | Chat/Reasoner | Yes       | Set =chatgpt-shell-deepseek-key=   |
-| Google     | Gemini        | Yes       | Set =chatgpt-shell-google-key=     |
-| Kagi       | Summarizer    | Yes       | Set =chatgpt-shell-kagi-key=       |
-| Ollama     | Llama         | Yes       | Install [[https://ollama.com/][Ollama]]                   |
-| OpenAI     | ChatGPT       | Yes       | Set =chatgpt-shell-openai-key=     |
-| OpenRouter | Various       | Yes       | Set =chatgpt-shell-openrouter-key= |
-| Perplexity | Llama Sonar   | Yes       | Set =chatgpt-shell-perplexity-key= |
 
-Note: With the exception of [[https://ollama.com/][Ollama]], you typically have to pay the cloud services for API access. Please check with each respective LLM service.
+Note: You need to pay Anthropic for API access. Please check with Anthropic for pricing.
 
-My favourite model is missing.
-
-| [[https://github.com/xenodium/chatgpt-shell/issues][File a feature request]] | [[https://github.com/sponsors/xenodium][sponsor the work]] |
+This fork focuses exclusively on Claude models for security and simplicity.
 
 ** A familiar shell
 
@@ -141,89 +132,71 @@ Via [[https://github.com/jwiegley/use-package][use-package]], you can install wi
 
 * Set default model
 #+begin_src emacs-lisp :lexical no
-  (setq chatgpt-shell-model-version "llama3.2")
+  (setq chatgpt-shell-model-version "claude-3-5-sonnet-latest")
 #+end_src
 
 * Set API Keys
 
-You will first need to get an API key for each of the various public LLM endpoints you
-want to interact with.
+You will need to get an API key from Anthropic to use Claude models.
 
 | Service    | Model(s)      | Link: get an API Key                                                                      |
 |------------|---------------|-------------------------------------------------------------------------------------------|
-| OpenAI     | ChatGPT       | [[https://platform.openai.com/account/api-keys][Get an API Key]]                          |
 | Anthropic  | Claude        | [[https://console.anthropic.com/dashboard][Visit the Dashboard]]                          |
-| Deepseek   | Chat/Reasoner | [[https://platform.deepseek.com/api_keys][Get an API Key]]                                |
-| Google     | Gemini        | [[https://aistudio.google.com/app/apikey][Get an API Key]]                                |
-| Kagi       | Summarizer    | [[https://kagi.com/settings?p=api][Get an API Key]]                                       |
-| OpenRouter | Various       | [[https://openrouter.ai/settings/keys][Manage your API keys]]                             |
-| Perplexity | Llama Sonar   | [[https://docs.perplexity.ai/guides/getting-started#generate-an-api-key][Get an API Key]] |
 
 
-** Provide the API Key to ChatGPT via a function
+** Provide the API Key to Claude via a function
 
-You can define a function that chatgpt-shell invokes to get the API Key. The
-following example is for Open AI; use a similar approach for other services.
+You can define a function that chatgpt-shell invokes to get the API Key for Anthropic's Claude.
  
 #+begin_src emacs-lisp
   ;; if you are using the "pass" password manager
-  (setq chatgpt-shell-openai-key
+  (setq chatgpt-shell-anthropic-key
         (lambda ()
-          ;; (auth-source-pass-get 'secret "openai-key") ; alternative using pass support in auth-sources
-          (nth 0 (process-lines "pass" "show" "openai-key"))))
+          ;; (auth-source-pass-get 'secret "anthropic-key") ; alternative using pass support in auth-sources
+          (nth 0 (process-lines "pass" "show" "anthropic-key"))))
 
   ;; or if using auth-sources, e.g., so the file ~/.authinfo has this line:
-  ;;  machine api.openai.com password OPENAI_KEY
-  (setq chatgpt-shell-openai-key
-        (auth-source-pick-first-password :host "api.openai.com"))
+  ;;  machine api.anthropic.com password ANTHROPIC_KEY
+  (setq chatgpt-shell-anthropic-key
+        (auth-source-pick-first-password :host "api.anthropic.com"))
 
   ;; or same as previous but lazy loaded (prevents unexpected passphrase prompt)
-  (setq chatgpt-shell-openai-key
+  (setq chatgpt-shell-anthropic-key
         (lambda ()
-          (auth-source-pick-first-password :host "api.openai.com")))
+          (auth-source-pick-first-password :host "api.anthropic.com")))
 #+end_src
 
-** Set the appropriate variable Manually/Interactively
+** Set the variable manually/interactively
 
 =M-x set-variable chatgpt-shell-anthropic-key=
 
-=M-x set-variable chatgpt-shell-deepseek-key=
-
-=M-x set-variable chatgpt-shell-google-key=
-
-...
-
-** Set the appropriate variable programatically, in your emacs init file
+** Set the variable programmatically in your emacs init file
 #+begin_src emacs-lisp
   ;; set anthropic key from a string
   (setq chatgpt-shell-anthropic-key "my anthropic key")
-  ;; set OpenAI key from the environment
-  (setq chatgpt-shell-openai-key (getenv "OPENAI_API_KEY"))
-
+  ;; set anthropic key from the environment
+  (setq chatgpt-shell-anthropic-key (getenv "ANTHROPIC_API_KEY"))
 #+end_src
 
-* ChatGPT through proxy service
+* Claude through proxy service
 
-If you use ChatGPT through proxy service "https://api.chatgpt.domain.com", set options like the following:
+If you use Claude through proxy service "https://api.claude.domain.com", set options like the following:
 
 #+begin_src emacs-lisp :lexical no
   (use-package chatgpt-shell
     :ensure t
     :custom
-    ((chatgpt-shell-api-url-base "https://api.chatgpt.domain.com")
-     (chatgpt-shell-openai-key
+    ((chatgpt-shell-anthropic-api-url-base "https://api.claude.domain.com")
+     (chatgpt-shell-anthropic-key
       (lambda ()
-        ;; Here the openai-key should be the proxy service key.
-        (auth-source-pass-get 'secret "openai-key")))))
+        ;; Here the anthropic-key should be the proxy service key.
+        (auth-source-pass-get 'secret "anthropic-key")))))
 #+end_src
 
-If your proxy service API path is not OpenAI ChatGPT default path like "=/v1/chat/completions=", then
-you can customize option ~chatgpt-shell-api-url-path~.
+* Using Claude through HTTP(S) proxy
 
-* Using ChatGPT through HTTP(S) proxy
-
-Behind the scenes chatgpt-shell uses =curl= to send requests to the openai server.
-If you use ChatGPT through a HTTP proxy (for example you are in a corporate network and a HTTP proxy shields the corporate network from the internet), you need to tell =curl= to use the proxy via the curl option =-x http://your_proxy=.
+Behind the scenes chatgpt-shell uses =curl= to send requests to the anthropic server.
+If you use Claude through a HTTP proxy (for example you are in a corporate network and a HTTP proxy shields the corporate network from the internet), you need to tell =curl= to use the proxy via the curl option =-x http://your_proxy=.
 For this, use =chatgpt-shell-proxy=.
 
 For example, if you want curl =-x= and =http://your_proxy=, set =chatgpt-shell-proxy= to "=http://your_proxy=".
